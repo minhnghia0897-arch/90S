@@ -1,0 +1,57 @@
+// Lightweight HTML sanitizer - strips dangerous tags/attributes
+// Used wherever we render HTML from user/admin input
+
+const ALLOWED_TAGS = new Set([
+  'p','br','b','i','strong','em','u','s','ul','ol','li',
+  'h1','h2','h3','h4','h5','h6','blockquote','a','span','div'
+]);
+
+const ALLOWED_ATTRS: Record<string, string[]> = {
+  a: ['href', 'target', 'rel'],
+  span: ['class'],
+  div: ['class'],
+  p: ['class'],
+};
+
+export function sanitizeHTML(html: string): string {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+
+  function clean(node: Node): void {
+    const children = Array.from(node.childNodes);
+    for (const child of children) {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        const el = child as Element;
+        const tag = el.tagName.toLowerCase();
+        if (!ALLOWED_TAGS.has(tag)) {
+          // Replace disallowed element with its text content
+          const text = document.createTextNode(el.textContent || '');
+          node.replaceChild(text, child);
+        } else {
+          // Remove disallowed attributes
+          const allowed = ALLOWED_ATTRS[tag] || [];
+          const attrs = Array.from(el.attributes);
+          for (const attr of attrs) {
+            if (!allowed.includes(attr.name)) {
+              el.removeAttribute(attr.name);
+            }
+          }
+          // Fix anchor hrefs - no javascript:
+          if (tag === 'a') {
+            const href = el.getAttribute('href') || '';
+            if (/^javascript:/i.test(href)) {
+              el.removeAttribute('href');
+            } else {
+              el.setAttribute('rel', 'noopener noreferrer');
+              el.setAttribute('target', '_blank');
+            }
+          }
+          clean(el);
+        }
+      }
+    }
+  }
+
+  clean(doc.body);
+  return doc.body.innerHTML;
+}

@@ -1,0 +1,65 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import Category from './pages/Category';
+import Product from './pages/Product';
+import Discovery from './pages/Discovery';
+import Auth from './pages/Auth';
+import Checkout from './pages/Checkout';
+import SkinScience from './pages/SkinScience';
+import SpaSolution from './pages/SpaSolution';
+import News from './pages/News';
+import Policies from './pages/Policies';
+import Contact from './pages/Contact';
+import About from './pages/About';
+import AdminLayout from './pages/Admin/AdminLayout';
+import AdminDashboard from './pages/Admin/Dashboard';
+import AdminProducts from './pages/Admin/Products';
+import AdminOrders from './pages/Admin/Orders';
+import AdminBanners from './pages/Admin/Banners';
+import AdminSEO from './pages/Admin/SEO';
+import AdminLogin from './pages/Admin/Login';
+import AdminCustomers from './pages/Admin/Customers';
+import AdminVouchers from './pages/Admin/Vouchers';
+
+import { CartProvider } from './context/CartContext';
+
+function App() {
+  return (
+    <CartProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="category/:categoryId" element={<Category />} />
+            <Route path="product/:productId" element={<Product />} />
+            <Route path="discovery" element={<Discovery />} />
+            <Route path="auth" element={<Auth />} />
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="skin-science" element={<SkinScience />} />
+            <Route path="spa-solution" element={<SpaSolution />} />
+            <Route path="news" element={<News />} />
+            <Route path="policies" element={<Policies />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="about" element={<About />} />
+          </Route>
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="login" element={<AdminLogin />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="banners" element={<AdminBanners />} />
+            <Route path="seo" element={<AdminSEO />} />
+            <Route path="customers" element={<AdminCustomers />} />
+            <Route path="vouchers" element={<AdminVouchers />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </CartProvider>
+  );
+}
+
+export default App;
